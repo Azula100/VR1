@@ -4,12 +4,9 @@
 <meta charset="utf-8">
 <title>GLB Loader</title>
 <style>
-body{
-margin:0;
-overflow:hidden;
-background:#1a1a2e;
-}
-</style>
+    body { margin:0; overflow:hidden; }
+    canvas { display:block; }
+  </style>
 <script type="importmap">
 {
 "imports":{
@@ -26,66 +23,66 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { VRButton } from "three/addons/webxr/VRButton.js";
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b1220);
+scene.background = new THREE.Color(0x202025);
 
-const camera = new THREE.PerspectiveCamera(
-  65,
-  window.innerWidth / window.innerHeight,
-  0.01,
-  100
-);
-camera.position.set(0, 1.6, 3.8);
+// Камер
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.6, 3); // Хүний өндрөөр байрлуулах
 
+// Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.xr.enabled = true;
 document.body.appendChild(renderer.domElement);
+
+// VR товчлуур
 document.body.appendChild(VRButton.createButton(renderer));
 
-const hemi = new THREE.HemisphereLight(0xffffff, 0x223344, 1.2);
-scene.add(hemi);
+// Тусгай гэрэл
+const light = new THREE.HemisphereLight(0xffffff, 0x444444);
+light.position.set(0, 20, 0);
+scene.add(light);
 
-const dir = new THREE.DirectionalLight(0xffffff, 1.2);
-dir.position.set(5, 8, 6);
-scene.add(dir);
+const dirLight = new THREE.DirectionalLight(0xffffff);
+dirLight.position.set(3, 10, 10);
+scene.add(dirLight);
 
 const loader = new GLTFLoader();
-
 loader.load(
   "./lab4.glb",
-  (gltf) => {
-    const modelRoot = gltf.scene;
+   function (gltf) {
+    const model = gltf.scene;
 
-    modelRoot.traverse((obj) => {
-      if (obj.isMesh && obj.material) {
-        obj.material = obj.material.clone();
-      }
-    });
-
-    scene.add(modelRoot);
-
-    modelRoot.scale.set(0.22, 0.22, 0.22);
-
-    const box = new THREE.Box3().setFromObject(modelRoot);
-    modelRoot.position.y -= box.min.y;
-
-    console.log("GLB model ачааллаа:", modelRoot);
+    // VR-д зөв байрлуулах
+    model.position.set(0, 0, -1);  // хэрэглэгчээс 1м урд
+    model.scale.set(1, 1, 1);      // Хэмжээг тохируулах
+    scene.add(model);
+    console.log('GLB файл ачааллаа');
   },
   undefined,
-  (err) => {
-    console.error("GLB файл ачаалж чадсангүй:", err);
+  function (error) {
+    console.error('GLB файл ачаалж чадсангүй:', error);
   }
 );
 
-window.addEventListener("resize", () => {
+// Animation loop
+function animate() {
+  renderer.setAnimationLoop(render);
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// Canvas resize
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-renderer.setAnimationLoop(() => {
-  renderer.render(scene, camera);
-});
 </script>
 
 </body>
