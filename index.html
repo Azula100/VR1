@@ -73,7 +73,7 @@ loader.load(
     const minY = box.min.y;
     model.position.set(0, -minY, -1); // Z=-1 хэрэглэгчээс 1м урд
     model.scale.set(1, 1, 1);
-    scene.add(model);
+   
 
     // Объектуудыг нэрээр авах
     const router = model.getObjectByName("router");
@@ -97,7 +97,7 @@ loader.load(
     if(switch1 && pc2){
         createCable(getWorldPos(switch1), getWorldPos(pc2), 0x00ff00); // Ногоон
     }
-
+ scene.add(model);
     console.log('GLB файл VR-д шал дээр байрлаж, холболт хийсэн');
   },
   undefined,
@@ -124,4 +124,5 @@ window.addEventListener('resize', () => {
 
 </body>
 </html>
+
 
