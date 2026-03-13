@@ -65,21 +65,29 @@ function createCable(start, end, color = 0xffff00) {
 const loader = new GLTFLoader();
 loader.load(
   "./lab4.glb",
-   function (gltf) {
+  function (gltf) {
     const model = gltf.scene;
-    // VR-д зөв байрлуулах
-    model.position.set(0, 0, -1);  // хэрэглэгчээс 1м урд
-    model.scale.set(1, 1, 1);      // Хэмжээг тохируулах
+
+    // Загварын бүх Object-уудыг шал дээр байрлуулах
+    const box = new THREE.Box3().setFromObject(model); // Загварын хэмжээ
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const minY = box.min.y;
+
+    // Загварын доод хэсгийг Y=0 дээр байрлуулах
+    model.position.set(0, -minY, -1); // Z = -1 хэрэглэгчээс 1м урд
+    model.scale.set(1, 1, 1);
+
     scene.add(model);
 
+    // Кабель үүсгэх
     const router = model.getObjectByName("router");
     const switch1 = model.getObjectByName("switch");
     const pc1 = model.getObjectByName("komMouseKey1");
     const pc2 = model.getObjectByName("komMouseKey2");
 
-    // Кабель үүсгэх
     if(router && switch1){
-        createCable(router.position, switch1.position, 0xff0000); // Улаан кабель
+        createCable(router.position, switch1.position, 0xff0000);
     }
     if(switch1 && pc1){
         createCable(switch1.position, pc1.position, 0x00ff00);
@@ -96,7 +104,6 @@ loader.load(
   }
 );
 
-// Animation loop
 function animate() {
   renderer.setAnimationLoop(render);
 }
@@ -106,8 +113,6 @@ function render() {
 }
 
 animate();
-
-// Canvas resize
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
