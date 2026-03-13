@@ -47,17 +47,48 @@ const dirLight = new THREE.DirectionalLight(0xffffff);
 dirLight.position.set(3, 10, 10);
 scene.add(dirLight);
 
+function createCable(start, end, color = 0xffff00) {
+    const distance = start.distanceTo(end);
+    const geometry = new THREE.CylinderGeometry(0.02, 0.02, distance, 8);
+    const material = new THREE.MeshStandardMaterial({ color: color });
+    const cable = new THREE.Mesh(geometry, material);
+
+    const midpoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+    cable.position.copy(midpoint);
+
+    cable.lookAt(end);
+    cable.rotateX(Math.PI / 2); 
+
+    scene.add(cable);
+}
+
 const loader = new GLTFLoader();
 loader.load(
   "./lab4.glb",
    function (gltf) {
     const model = gltf.scene;
-
     // VR-д зөв байрлуулах
     model.position.set(0, 0, -1);  // хэрэглэгчээс 1м урд
     model.scale.set(1, 1, 1);      // Хэмжээг тохируулах
     scene.add(model);
-    console.log('GLB файл ачааллаа');
+
+    const router = model.getObjectByName("router");
+    const switch1 = model.getObjectByName("switch");
+    const pc1 = model.getObjectByName("komMouseKey1");
+    const pc2 = model.getObjectByName("komMouseKey2");
+
+    // Кабель үүсгэх
+    if(router && switch1){
+        createCable(router.position, switch1.position, 0xff0000); // Улаан кабель
+    }
+    if(switch1 && pc1){
+        createCable(switch1.position, pc1.position, 0x00ff00);
+    }
+    if(switch1 && pc2){
+        createCable(switch1.position, pc2.position, 0x00ff00);
+    }
+
+    console.log('GLB файл ачааллаа, кабель нэмсэн');
   },
   undefined,
   function (error) {
