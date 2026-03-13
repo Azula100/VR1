@@ -68,43 +68,42 @@ loader.load(
   function (gltf) {
     const model = gltf.scene;
 
-    // Загварын хэмжээ авч шал дээр байрлуулах
-    const box = new THREE.Box3().setFromObject(model);
+    // Загварын бүх Object-уудыг шал дээр байрлуулах
+    const box = new THREE.Box3().setFromObject(model); // Загварын хэмжээ
+    const size = new THREE.Vector3();
+    box.getSize(size);
     const minY = box.min.y;
-    model.position.set(0, -minY, -1); // Z=-1 хэрэглэгчээс 1м урд
+
+    // Загварын доод хэсгийг Y=0 дээр байрлуулах
+    model.position.set(0, -minY, -1); // Z = -1 хэрэглэгчээс 1м урд
     model.scale.set(1, 1, 1);
-   
 
-    // Объектуудыг нэрээр авах
-    const router = model.getObjectByName("router");
-    const switch1 = model.getObjectByName("switch");
-    const pc1 = model.getObjectByName("komMouseKey1");
-    const pc2 = model.getObjectByName("komMouseKey2");
+    scene.add(model);
 
-    function getWorldPos(obj){
-        const pos = new THREE.Vector3();
-        obj.getWorldPosition(pos);
-        return pos;
-    }
+    // // Кабель үүсгэх
+    // const router = model.getObjectByName("router");
+    // const switch1 = model.getObjectByName("switch");
+    // const pc1 = model.getObjectByName("komMouseKey1");
+    // const pc2 = model.getObjectByName("komMouseKey2");
 
-    // Кабель үүсгэх
-    if(router && switch1){
-        createCable(getWorldPos(router), getWorldPos(switch1), 0xff0000); // Улаан
-    }
-    if(switch1 && pc1){
-        createCable(getWorldPos(switch1), getWorldPos(pc1), 0x00ff00); // Ногоон
-    }
-    if(switch1 && pc2){
-        createCable(getWorldPos(switch1), getWorldPos(pc2), 0x00ff00); // Ногоон
-    }
- scene.add(model);
-    console.log('GLB файл VR-д шал дээр байрлаж, холболт хийсэн');
+    // if(router && switch1){
+    //     createCable(router.position, switch1.position, 0xff0000);
+    // }
+    // if(switch1 && pc1){
+    //     createCable(switch1.position, pc1.position, 0x00ff00);
+    // }
+    // if(switch1 && pc2){
+    //     createCable(switch1.position, pc2.position, 0x00ff00);
+    // }
+
+    console.log('GLB файл ачааллаа, кабель нэмсэн');
   },
   undefined,
   function (error) {
     console.error('GLB файл ачаалж чадсангүй:', error);
   }
 );
+
 function animate() {
   renderer.setAnimationLoop(render);
 }
@@ -124,5 +123,3 @@ window.addEventListener('resize', () => {
 
 </body>
 </html>
-
-
