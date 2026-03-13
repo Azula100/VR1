@@ -72,11 +72,11 @@ loader.load(
     const box = new THREE.Box3().setFromObject(model); // Загварын хэмжээ
     const size = new THREE.Vector3();
     box.getSize(size);
-    const minY = box.min.y;
+    // const minY = box.min.y;
 
-    // Загварын доод хэсгийг Y=0 дээр байрлуулах
-    model.position.set(0, -minY, -1); // Z = -1 хэрэглэгчээс 1м урд
-    model.scale.set(1, 1, 1);
+    // // Загварын доод хэсгийг Y=0 дээр байрлуулах
+    // model.position.set(0, -minY, -1); // Z = -1 хэрэглэгчээс 1м урд
+    // model.scale.set(1, 1, 1);
 
     scene.add(model);
 
@@ -123,4 +123,5 @@ window.addEventListener('resize', () => {
 
 </body>
 </html>
+
 
